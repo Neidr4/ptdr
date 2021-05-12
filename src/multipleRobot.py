@@ -14,9 +14,9 @@ from geometry_msgs.msg import Quaternion, TransformStamped, Twist
 from tf.transformations import quaternion_about_axis
 #from tf.TransformBroadcaster import quaternion_about_axis
 
-robot0_ns = "robot0"
-robot1_ns = "robot1"
-robot2_ns = "robot2"
+robot0_ns = "robot_0"
+robot1_ns = "robot_1"
+robot2_ns = "robot_2"
 
 class Robot:
 

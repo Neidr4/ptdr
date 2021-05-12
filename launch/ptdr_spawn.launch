@@ -3,7 +3,7 @@
 
     <!-- ================================== -->
     <!-- ============ Variables =========== -->
-    <!-- ================================== --> 
+    <!-- ================================== -->
 
     <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
 
@@ -27,6 +27,7 @@
     <arg name="namespace_2_y_pos" default="-1.0"/>
     <arg name="namespace_2_z_pos" default="0.0"/>
     <arg name="namespace_2_yaw" default="0.0"/>
+
 
     <!-- ================================== -->
     <!-- ============= Gazebo ============= -->
@@ -52,42 +53,12 @@
     <!-- ============= Robot_0 ============ -->
     <!-- ================================== -->
 
-    <group ns="$(arg namespace_0)">
-
-
-        <!-- Xacro call -->
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-
-        <!-- TF with prefix -->
-        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
-            <param name="publish_frequency" type="double" value="50.0" />
-            <param name="tf_prefix" value="$(arg namespace_0)" />
-        </node>
-
-        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg namespace_0) -x $(arg namespace_0_x_pos) -y $(arg namespace_0_y_pos) -z $(arg namespace_0_z_pos) -Y $(arg namespace_0_yaw) -param robot_description" />
-
-        <!-- AMCL -->
-        <node pkg="amcl" type="amcl" name="amcl">
-            <!-- Load default parameters for turtlebot -->
-            <rosparam file="$(find ptdr)/params/amcl.yaml" command="load" />
-            <param name="initial_pose_x" value="$(arg namespace_0_x_pos)"/>
-            <param name="initial_pose_y" value="$(arg namespace_0_y_pos)"/>
-            <param name="initial_pose_a" value="$(arg namespace_0_yaw)"/>
-
-            <param name="odom_frame_id"  value="$(arg namespace_0)/odom"/>
-            <param name="base_frame_id"  value="$(arg namespace_0)/base_footprint"/>
-
-            <!-- Use the single map server -->
-            <remap from="static_map" to="/static_map"/>
-        </node>
-
-        <!-- Map Server -->
-        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
-
-    </group>
-
-    <include file="$(find turtlebot3_nps)/launch/move_base_namespace.launch">
+    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
         <arg name="robot_namespace" value="$(arg namespace_0)" />
+        <arg name="init_x_pos" value="$(arg namespace_0_x_pos)"/>
+        <arg name="init_y_pos" value="$(arg namespace_0_y_pos)"/>
+        <arg name="init_z_pos" value="$(arg namespace_0_z_pos)"/>
+        <arg name="init_yaw"   value="$(arg namespace_0_yaw)"  />
     </include>
 
 
@@ -95,29 +66,33 @@
     <!-- ============= Robot_1 ============ -->
     <!-- ================================== -->
 
-    <group ns="$(arg namespace_1)">
-
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf1" args="-urdf -model turtlebot31_$(arg model) -x 1 -y 1 -z 0 -param robot_description" />
-
-        <!-- Map Server -->
-        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
-
-    </group>
+    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
+        <arg name="robot_namespace" value="$(arg namespace_1)" />
+        <arg name="init_x_pos" value="$(arg namespace_1_x_pos)"/>
+        <arg name="init_y_pos" value="$(arg namespace_1_y_pos)"/>
+        <arg name="init_z_pos" value="$(arg namespace_1_z_pos)"/>
+        <arg name="init_yaw"   value="$(arg namespace_1_yaw)"  />
+    </include>
 
 
     <!-- ================================== -->
     <!-- ============= Robot_2 ============ -->
     <!-- ================================== -->
 
-    <group ns="$(arg namespace_2)">
+    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
+        <arg name="robot_namespace" value="$(arg namespace_2)" />
+        <arg name="init_x_pos" value="$(arg namespace_2_x_pos)"/>
+        <arg name="init_y_pos" value="$(arg namespace_2_y_pos)"/>
+        <arg name="init_z_pos" value="$(arg namespace_2_z_pos)"/>
+        <arg name="init_yaw"   value="$(arg namespace_2_yaw)"  />
+    </include>
 
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf2" args="-urdf -model turtlebot32_$(arg model) -x -1 -y -1 -z 0 -param robot_description" />
 
-    </group>
+    <!-- ================================== -->
+    <!-- ============== Rviz ============== -->
+    <!-- ================================== -->
 
-    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg namespace_0)/map 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_1)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_1)/map 100"/>
+    <node pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find ptdr)/config/rviz_simple.rviz"/>
+
 
 </launch>
