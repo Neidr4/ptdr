@@ -1,11 +1,36 @@
+<?xml version="1.0"?>
 <launch>
 
+    <!-- ================================== -->
+    <!-- ============ Variables =========== -->
+    <!-- ================================== --> 
+
     <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-    <arg name="x_pos" default="0.0"/>
-    <arg name="y_pos" default="0.0"/>
-    <arg name="z_pos" default="0.0"/>
 
+    <arg name="map_file" default="$(find ptdr)/maps/map.yaml"/>
 
+    <arg name="namespace_0"  default="robot_0"/>
+    <arg name="namespace_1"  default="robot_1"/>
+    <arg name="namespace_2"  default="robot_2"/>
+    
+    <arg name="namespace_0_x_pos" default="0.0"/>
+    <arg name="namespace_0_y_pos" default="0.0"/>
+    <arg name="namespace_0_z_pos" default="0.0"/>
+    <arg name="namespace_0_yaw" default="0.0"/>
+
+    <arg name="namespace_1_x_pos" default="1.0"/>
+    <arg name="namespace_1_y_pos" default="1.0"/>
+    <arg name="namespace_1_z_pos" default="0.0"/>
+    <arg name="namespace_1_yaw" default="0.0"/>
+
+    <arg name="namespace_2_x_pos" default="-1.0"/>
+    <arg name="namespace_2_y_pos" default="-1.0"/>
+    <arg name="namespace_2_z_pos" default="0.0"/>
+    <arg name="namespace_2_yaw" default="0.0"/>
+
+    <!-- ================================== -->
+    <!-- ============= Gazebo ============= -->
+    <!-- ================================== -->
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <!-- arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/ -->
@@ -17,28 +42,82 @@
         <arg name="debug" value="false"/>
     </include>
 
-    <param name="/use_sim_time" value="true" /> 
-    <!-- node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find ptdr)/worlds/empty.world" respawn="false" output="screen"/ -->
+    <param name="/use_sim_time" value="true" />
 
-    <group ns="robot0">
+    <!-- Map Server -->
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
+
+    <!-- ================================== -->
+    <!-- ============= Robot_0 ============ -->
+    <!-- ================================== -->
+
+    <group ns="$(arg namespace_0)">
+
+
+        <!-- Xacro call -->
         <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf0" args="-urdf -model turtlebot30_$(arg model) -x 0 -y 0 -z $(arg z_pos) -param robot_description" />
+
+        <!-- TF with prefix -->
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" value="$(arg namespace_0)" />
+        </node>
+
+        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg namespace_0) -x $(arg namespace_0_x_pos) -y $(arg namespace_0_y_pos) -z $(arg namespace_0_z_pos) -Y $(arg namespace_0_yaw) -param robot_description" />
+
+        <!-- AMCL -->
+        <node pkg="amcl" type="amcl" name="amcl">
+            <!-- Load default parameters for turtlebot -->
+            <rosparam file="$(find ptdr)/params/amcl.yaml" command="load" />
+            <param name="initial_pose_x" value="$(arg namespace_0_x_pos)"/>
+            <param name="initial_pose_y" value="$(arg namespace_0_y_pos)"/>
+            <param name="initial_pose_a" value="$(arg namespace_0_yaw)"/>
+
+            <param name="odom_frame_id"  value="$(arg namespace_0)/odom"/>
+            <param name="base_frame_id"  value="$(arg namespace_0)/base_footprint"/>
+
+            <!-- Use the single map server -->
+            <remap from="static_map" to="/static_map"/>
+        </node>
+
+        <!-- Map Server -->
+        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
     </group>
 
-    <group ns="robot1">
+    <include file="$(find turtlebot3_nps)/launch/move_base_namespace.launch">
+        <arg name="robot_namespace" value="$(arg namespace_0)" />
+    </include>
+
+
+    <!-- ================================== -->
+    <!-- ============= Robot_1 ============ -->
+    <!-- ================================== -->
+
+    <group ns="$(arg namespace_1)">
 
         <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf1" args="-urdf -model turtlebot31_$(arg model) -x 1 -y 1 -z $(arg z_pos) -param robot_description" />
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf1" args="-urdf -model turtlebot31_$(arg model) -x 1 -y 1 -z 0 -param robot_description" />
+
+        <!-- Map Server -->
+        <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
     </group>
 
-    <group ns="robot2">
+
+    <!-- ================================== -->
+    <!-- ============= Robot_2 ============ -->
+    <!-- ================================== -->
+
+    <group ns="$(arg namespace_2)">
 
         <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
-        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf2" args="-urdf -model turtlebot32_$(arg model) -x -1 -y -1 -z $(arg z_pos) -param robot_description" />
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf2" args="-urdf -model turtlebot32_$(arg model) -x -1 -y -1 -z 0 -param robot_description" />
 
     </group>
+
+    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg namespace_0)/map 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_1)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_1)/map 100"/>
 
 </launch>
