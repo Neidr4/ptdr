@@ -12,6 +12,9 @@
     <arg name="init_y_pos" default="0.0"/>
     <arg name="init_z_pos" default="0.0"/>
     <arg name="init_yaw" default="0.0"/>
+
+    <arg name="robot_description_file" default="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/>
+
     <arg name="map_file" default="$(find ptdr)/maps/map_empty.yaml"/>
 
 
@@ -25,7 +28,7 @@
         <!-- ============ Xacro call ========== -->
         <!-- ================================== -->
 
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg robot_description_file)" />
 
 
         <!-- ================================== -->

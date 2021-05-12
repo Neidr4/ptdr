@@ -55,10 +55,14 @@
 
     <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
         <arg name="robot_namespace" value="$(arg namespace_0)" />
+        
         <arg name="init_x_pos" value="$(arg namespace_0_x_pos)"/>
         <arg name="init_y_pos" value="$(arg namespace_0_y_pos)"/>
         <arg name="init_z_pos" value="$(arg namespace_0_z_pos)"/>
         <arg name="init_yaw"   value="$(arg namespace_0_yaw)"  />
+
+        <arg name="robot_description_file" value="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/>
+        
     </include>
 
 
