@@ -23,8 +23,8 @@
     <arg name="namespace_1_z_pos" default="0.0"/>
     <arg name="namespace_1_yaw" default="0.0"/>
 
-    <arg name="namespace_2_x_pos" default="-1.0"/>
-    <arg name="namespace_2_y_pos" default="-1.0"/>
+    <arg name="namespace_2_x_pos" default="2.0"/>
+    <arg name="namespace_2_y_pos" default="2.0"/>
     <arg name="namespace_2_z_pos" default="0.0"/>
     <arg name="namespace_2_yaw" default="0.0"/>
 
@@ -44,9 +44,6 @@
     </include>
 
     <param name="/use_sim_time" value="true" />
-
-    <!-- Map Server -->
-    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
 
     <!-- ================================== -->
@@ -93,10 +90,29 @@
 
 
     <!-- ================================== -->
+    <!-- ============== Maps ============== -->
+    <!-- ================================== -->
+
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+<!--    
+    <node pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
+        <param name="robot_map_topic" value="map"/>
+        <param name="robot_namespace" value="robot"/>
+        <param name="merged_map_topic" value="map"/>
+        <param name="world_frame" value="map"/>
+        <param name="known_init_poses" value="false"/>
+        <param name="merging_rate" value="4"/>
+        <param name="discovery_rate" value="0.05"/>
+        <param name="estimation_rate" value="0.1"/>
+        <param name="estimation_confidence" value="1.0"/>
+    </node>
+-->
+
+    <!-- ================================== -->
     <!-- ============== Rviz ============== -->
     <!-- ================================== -->
 
     <node pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find ptdr)/config/rviz_simple.rviz"/>
-
 
 </launch>
