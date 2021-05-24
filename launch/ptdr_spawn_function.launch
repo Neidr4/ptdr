@@ -80,7 +80,7 @@
             <param name="scan" value="$(arg robot_namespace)/scan"/>
             <param name="odom_frame" value="$(arg robot_namespace)/odom"/>
             <param name="base_frame" value="$(arg robot_namespace)/base_link"/>
-            <param name="map_update_interval" value="2" />
+            <param name="map_update_interval" value="1" />
             <param name="xmin" value="-100" />
             <param name="xmax" value="100" />
             <param name="ymin" value="-100" />
@@ -91,7 +91,7 @@
         <!-- ============ move_base =========== -->
         <!-- ================================== -->
 
-        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
             <!-- Default configs form the TB3 repos -->
             <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
             <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />

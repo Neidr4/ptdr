@@ -47,19 +47,24 @@
     <node pkg="multirobot_map_merge" type="map_merge" respawn="false" name="map_merge" output="screen">
         <param name="robot_map_topic" value="map"/>
         <param name="robot_namespace" value="robot_"/>
-        <param name="merged_map_topic" value="map"/>
-        <param name="world_frame" value="/map"/>
+        <param name="merged_map_topic" value="map_merged"/>
+        <param name="world_frame" value="/world"/>
         <param name="known_init_poses" value="true"/>
-        <param name="merging_rate" value="1"/>
+        <param name="merging_rate" value="0.5"/>
         <param name="discovery_rate" value="0.05"/>
         <param name="estimation_rate" value="0.1"/>
         <param name="estimation_confidence" value="1.0"/>
     </node>
 
     
-    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_0)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_0)/map 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_1)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_1)/map 100"/>
-    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_2)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_2)/map 100"/>
+    <!-- node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_0)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_0)/map 100"/ -->
+    <!-- node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_1)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_1)/map 100"/ -->
+    <!-- node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_2)_tf_broadcaster" args="0 0 0 0 0 0 /map /$(arg namespace_2)/map 100"/ -->
+
+    <node pkg="tf" type="static_transform_publisher" name="world_to_map_merged_tf_broadcaster" args="0 0 0 0 0 0 /world /map_merged 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_0)_tf_broadcaster" args="0 0 0 0 0 0 /world /$(arg namespace_0)/map 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_1)_tf_broadcaster" args="0 0 0 0 0 0 /world /$(arg namespace_1)/map 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg namespace_2)_tf_broadcaster" args="0 0 0 0 0 0 /world /$(arg namespace_2)/map 100"/>
 
     <!-- node pkg="tf" type="static_transform_publisher" name="map_to_map_fused" args="-100 -100 0 0 0 0 /map /map_fused 100"/ -->
 
