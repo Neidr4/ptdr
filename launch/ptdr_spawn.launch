@@ -93,6 +93,8 @@
     <!-- ============== Maps ============== -->
     <!-- ================================== -->
 
+    <node pkg="tf" type="static_transform_publisher" name="world_to_map_tf_broadcaster" args="0 0 0 0 0 0 /world /map 100"/>
+
     <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
 <!--    
