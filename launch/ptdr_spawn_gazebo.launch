@@ -50,7 +50,7 @@
     <!-- ============= Robot_0 ============ -->
     <!-- ================================== -->
 
-    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
+    <include file="$(find ptdr)/launch/ptdr_spawn_function_gazebo.launch">
         <arg name="robot_namespace" value="$(arg namespace_0)" />
         
         <arg name="init_x_pos" value="$(arg namespace_0_x_pos)"/>
@@ -67,7 +67,7 @@
     <!-- ============= Robot_1 ============ -->
     <!-- ================================== -->
 
-    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
+    <include file="$(find ptdr)/launch/ptdr_spawn_function_gazebo.launch">
         <arg name="robot_namespace" value="$(arg namespace_1)" />
         <arg name="init_x_pos" value="$(arg namespace_1_x_pos)"/>
         <arg name="init_y_pos" value="$(arg namespace_1_y_pos)"/>
@@ -80,7 +80,7 @@
     <!-- ============= Robot_2 ============ -->
     <!-- ================================== -->
 
-    <include file="$(find ptdr)/launch/ptdr_spawn_function.launch">
+    <include file="$(find ptdr)/launch/ptdr_spawn_function_gazebo.launch">
         <arg name="robot_namespace" value="$(arg namespace_2)" />
         <arg name="init_x_pos" value="$(arg namespace_2_x_pos)"/>
         <arg name="init_y_pos" value="$(arg namespace_2_y_pos)"/>
